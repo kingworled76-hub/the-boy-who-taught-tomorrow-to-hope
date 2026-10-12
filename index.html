@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Boy Who Taught Tomorrow to Hope | AI Ambassadors Graduation Project</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            900: '#030712',
+                            800: '#0b1329',
+                            700: '#111d3b',
+                            600: '#1e293b'
+                        },
+                        gold: {
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-border {
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+        .gold-border:hover {
+            border-color: rgba(234, 179, 8, 0.8);
+        }
+        .glass-card {
+            background: rgba(11, 19, 41, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(234, 179, 8, 0.15);
+        }
+        .glass-nav {
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(234, 179, 8, 0.1);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+            border: 1px solid rgba(234, 179, 8, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #eab308;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="bg-navy-900 text-gray-100 selection:bg-gold-500 selection:text-navy-900">
+
+    <!-- Reading Progress Bar -->
+    <div id="progress-bar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-yellow-500 to-amber-300 z-50 transition-all duration-150" style="width: 0%;"></div>
+
+    <!-- Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#hero" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-full bg-navy-800 border border-gold-500/40 flex items-center justify-center group-hover:border-gold-500 transition-colors shadow-[0_0_15px_rgba(234,179,8,0.15)]">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-gold-400"></i>
+                </div>
+                <div class="hidden sm:block">
+                    <span class="text-sm font-semibold tracking-wider gold-gradient-text uppercase block">AI Ambassadors</span>
+                    <span class="text-xs text-gray-400">Graduation Project</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium">
+                <a href="#intro" class="text-gray-300 hover:text-gold-400 transition-colors">Introduction</a>
+                <a href="#chapter-1" class="text-gray-300 hover:text-gold-400 transition-colors">Ch 1</a>
+                <a href="#chapter-2" class="text-gray-300 hover:text-gold-400 transition-colors">Ch 2</a>
+                <a href="#chapter-3" class="text-gray-300 hover:text-gold-400 transition-colors">Ch 3</a>
+                <a href="#chapter-4" class="text-gray-300 hover:text-gold-400 transition-colors">Ch 4</a>
+                <a href="#chapter-5" class="text-gray-300 hover:text-gold-400 transition-colors">Ch 5</a>
+                <a href="#moral" class="text-gray-300 hover:text-gold-400 transition-colors">Moral</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <!-- Audio Ambient Toggle -->
+                <button id="audio-toggle" class="px-3 py-2 rounded-xl bg-navy-800/80 border border-gold-500/30 text-gold-400 hover:bg-navy-700 hover:border-gold-500 text-xs font-medium flex items-center space-x-2 transition-all shadow-[0_0_10px_rgba(234,179,8,0.1)]" title="Toggle Ambient Soundscape">
+                    <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4"></i>
+                    <span class="hidden md:inline" id="audio-text">Sound: Off</span>
+                </button>
+
+                <!-- Share Story Navbar Button -->
+                <button onclick="openShareModal()" class="px-3 py-2 rounded-xl bg-navy-800/80 border border-gold-500/30 text-gold-400 hover:bg-navy-700 hover:border-gold-500 text-xs font-medium flex items-center space-x-2 transition-all shadow-[0_0_10px_rgba(234,179,8,0.1)]" title="Share Story">
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Share</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-300 hover:text-gold-400 focus:outline-none">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden glass-card border-t border-gold-500/20 px-4 pt-4 pb-6 space-y-3">
+            <a href="#intro" class="block text-gray-300 hover:text-gold-400 py-2 border-b border-gray-800">Introduction</a>
+            <a href="#chapter-1" class="block text-gray-300 hover:text-gold-400 py-2 border-b border-gray-800">Chapter 1: A Dream Bigger Than His World</a>
+            <a href="#chapter-2" class="block text-gray-300 hover:text-gold-400 py-2 border-b border-gray-800">Chapter 2: The Idea That Nobody Believed In</a>
+            <a href="#chapter-3" class="block text-gray-300 hover:text-gold-400 py-2 border-b border-gray-800">Chapter 3: When Technology Met Humanity</a>
+            <a href="#chapter-4" class="block text-gray-300 hover:text-gold-400 py-2 border-b border-gray-800">Chapter 4: The Failure That Changed Everything</a>
+            <a href="#chapter-5" class="block text-gray-300 hover:text-gold-400 py-2 border-b border-gray-800">Chapter 5: The Future Begins Today</a>
+            <a href="#moral" class="block text-gray-300 hover:text-gold-400 py-2 border-b border-gray-800">The Moral of the Story</a>
+            <button onclick="openShareModal()" class="w-full mt-2 py-2.5 rounded-xl bg-gold-500 text-navy-900 font-semibold flex items-center justify-center space-x-2 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+                <span>Share This Story</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-gradient-to-b from-navy-900 via-navy-800 to-navy-900">
+        <canvas id="hero-canvas"></canvas>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.05)_0%,transparent_70%)] pointer-events-none"></div>
+        
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
+            <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-navy-700/80 border border-gold-500/30 text-gold-400 text-xs sm:text-sm font-medium mb-8 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
+                <i data-lucide="award" class="w-4 h-4"></i>
+                <span>AI Ambassadors Graduation Project</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6">
+                <span class="gold-gradient-text">The Boy Who Taught</span>
+                <br>
+                <span class="text-white">Tomorrow to Hope</span>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-lg sm:text-xl text-gray-300 mb-10 leading-relaxed font-light">
+                A journey of a young visionary student who harnessed artificial intelligence to bridge divides, ignite curiosity, and prove that technology's true destiny is to serve humanity.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#chapter-1" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-gold-500 to-amber-600 text-navy-900 font-bold hover:from-gold-400 hover:to-gold-500 transition-all duration-300 shadow-[0_0_25px_rgba(234,179,8,0.4)] flex items-center justify-center space-x-2 group">
+                    <span>Begin the Journey</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+
+                <a href="#intro" class="w-full sm:w-auto px-8 py-4 rounded-xl glass-card text-gray-200 font-semibold gold-border hover:bg-navy-700/80 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-gold-400"></i>
+                    <span>Explore Chapters</span>
+                </a>
+
+                <!-- Hero Share Story Button -->
+                <button onclick="openShareModal()" class="w-full sm:w-auto px-6 py-4 rounded-xl bg-navy-800 text-gold-400 font-semibold border border-gold-500/40 hover:bg-navy-700 hover:border-gold-500 transition-all duration-300 flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(234,179,8,0.15)]">
+                    <i data-lucide="share-2" class="w-5 h-5"></i>
+                    <span>Share Story</span>
+                </button>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center space-y-2 opacity-70 animate-bounce">
+                <span class="text-xs text-gray-400 uppercase tracking-widest">Scroll to read</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-gold-400"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Introduction Section -->
+    <section id="intro" class="py-24 relative bg-navy-900 border-t border-gold-500/10">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl">
+                <div class="absolute -right-20 -top-20 w-60 h-60 bg-gold-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold text-gold-400 tracking-widest uppercase">Foreword</span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white">Introduction</h2>
+                    </div>
+                </div>
+
+                <div class="space-y-6 text-gray-300 text-base sm:text-lg leading-relaxed font-light">
+                    <p class="first-letter:text-5xl first-letter:font-serif first-letter:text-gold-400 first-letter:float-left first-letter:mr-3 first-letter:leading-none">
+                        In an era where technology often moves faster than human understanding, the true measure of innovation is not how complex it is, but how deeply it touches lives. This is the inspiring chronicle of Adam, a young student fueled by boundless curiosity and an unwavering belief in education.
+                    </p>
+                    <p>
+                        Growing up in a community where advanced educational resources were scarce, Adam witnessed brilliant minds fade into silence simply because they lacked personalized guidance. While others saw insurmountable walls, Adam saw an opportunity for code and compassion to build a bridge.
+                    </p>
+                    <p class="text-gold-400/90 font-medium italic border-l-2 border-gold-500 pl-4 py-1">
+                        "Artificial intelligence should not replace human warmth; it should amplify it so that every child, no matter where they are born, can hear the whisper of tomorrow saying: you matter, and you can achieve."
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapters Container -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24 py-12">
+
+        <!-- Chapter 1 -->
+        <article id="chapter-1" class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl border border-gold-500/20 scroll-mt-28">
+            <div class="absolute top-0 right-0 bg-gold-500/10 px-6 py-2 rounded-bl-2xl border-l border-b border-gold-500/20 text-gold-400 text-xs font-semibold tracking-wider uppercase">
+                Chapter One
+            </div>
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="text-xs uppercase tracking-widest text-gold-400 font-semibold">Beginning the Journey</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">A Dream Bigger Than His World</h2>
+            
+            <div class="space-y-6 text-gray-300 text-base sm:text-lg leading-relaxed">
+                <p>
+                    Adam was fifteen years old when he realized that knowledge was unequally distributed. In his small neighborhood, dusty textbooks were passed down like ancient relics through four generations of students. Pages were missing, equations were scrawled over with ink corrections, and questions asked after school hours went unanswered because teachers were already exhausted from working second jobs.
+                </p>
+                <p>
+                    Yet, Adam possessed an old, battered laptop salvaged from a recycling depot—a machine held together with electrical tape and stubborn hope. Through midnight Wi-Fi stolen from the community library’s courtyard, Adam discovered the vast ocean of global information. But more than facts and figures, he discovered artificial intelligence.
+                </p>
+                <p>
+                    To most teenagers, AI was a tool for generating funny images or writing shortcut essays. To Adam, staring at blinking command lines in his dim bedroom, it looked like something else entirely: a tireless tutor, an endlessly patient companion, and a key that could unlock locked doors. He dreamed of building an AI mentor that could speak in the local dialect, understand local struggles, and adapt to every child's unique learning pace.
+                </p>
+            </div>
+        </article>
+
+        <!-- Chapter 2 -->
+        <article id="chapter-2" class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl border border-gold-500/20 scroll-mt-28">
+            <div class="absolute top-0 right-0 bg-gold-500/10 px-6 py-2 rounded-bl-2xl border-l border-b border-gold-500/20 text-gold-400 text-xs font-semibold tracking-wider uppercase">
+                Chapter Two
+            </div>
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="text-xs uppercase tracking-widest text-gold-400 font-semibold">Overcoming Skepticism</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">The Idea That Nobody Believed In</h2>
+            
+            <div class="space-y-6 text-gray-300 text-base sm:text-lg leading-relaxed">
+                <p>
+                    When Adam first presented his concept at the school science fair—an AI assistant named <em>"Lumen"</em> designed to help underprivileged students master mathematics and science—he was met with polite skepticism and occasional laughter.
+                </p>
+                <p>
+                    "Computers don't understand poverty, Adam," the judges told him gently. "Algorithms need clean data, high-speed servers, and corporate budgets. You have a broken laptop and a dream." Even his classmates whispered that he was wasting precious study hours on science fiction instead of memorizing standard exam questions.
+                </p>
+                <p>
+                    Undeterred, Adam spent his weekends sitting on the steps of community centers, interviewing struggling students and frustrated teachers. He asked them one simple question: <em>"If you had a teacher available 24 hours a day who never judged you for not understanding, what would you ask?"</em> 
+                </p>
+                <p>
+                    He gathered hundreds of real pedagogical challenges, common misconceptions, and localized metaphors. Instead of building Lumen in an ivory tower, Adam engineered it from the grassroots up, proving that the best technology is born from deep empathy, not massive capital.
+                </p>
+            </div>
+        </article>
+
+        <!-- Chapter 3 -->
+        <article id="chapter-3" class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl border border-gold-500/20 scroll-mt-28">
+            <div class="absolute top-0 right-0 bg-gold-500/10 px-6 py-2 rounded-bl-2xl border-l border-b border-gold-500/20 text-gold-400 text-xs font-semibold tracking-wider uppercase">
+                Chapter Three
+            </div>
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="text-xs uppercase tracking-widest text-gold-400 font-semibold">Synergy & Breakthrough</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">When Technology Met Humanity</h2>
+            
+            <div class="space-y-6 text-gray-300 text-base sm:text-lg leading-relaxed">
+                <p>
+                    The turning point arrived when Maya, a brilliant young coder from the neighboring district, heard about Adam’s lonely crusade. Recognizing the profound potential of Lumen, Maya joined forces with him. Together, they formed a powerhouse duo: Adam provided the human vision and psychological depth, while Maya architected scalable, lightweight models that could run efficiently even on low-bandwidth mobile devices.
+                </p>
+                <p>
+                    They embedded robust safety guardrails into Lumen to ensure accuracy, privacy protection, and ethical response filtering. When Lumen was finally deployed across three local community centers as a pilot program, the transformation was instantaneous.
+                </p>
+                <p>
+                    Students who previously hid in the back of classrooms began raising their hands. Lumen didn't just give answers; it guided learners step-by-step using analogies from their everyday lives—explaining physics through local marketplace mechanics and algebra through community gardening layouts. Attendance soared, grades climbed, and for the first time, children who felt invisible began to shine.
+                </p>
+            </div>
+        </article>
+
+        <!-- Chapter 4 -->
+        <article id="chapter-4" class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl border border-gold-500/20 scroll-mt-28">
+            <div class="absolute top-0 right-0 bg-gold-500/10 px-6 py-2 rounded-bl-2xl border-l border-b border-gold-500/20 text-gold-400 text-xs font-semibold tracking-wider uppercase">
+                Chapter Four
+            </div>
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="text-xs uppercase tracking-widest text-gold-400 font-semibold">The Crucible of Adversity</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">The Failure That Changed Everything</h2>
+            
+            <div class="space-y-6 text-gray-300 text-base sm:text-lg leading-relaxed">
+                <p>
+                    Success, however, rarely travels a straight line. One Tuesday evening during the midterm exam season, Lumen suffered a catastrophic server failure caused by an unexpected surge in concurrent users. For three agonizing hours, the system went completely dark. 
+                </p>
+                <p>
+                    Panic gripped the students relying on Lumen for last-minute revision. Despair threatened to undo months of hard work. Adam sat at his desk, staring at error logs flashing red across his screen, feeling the crushing weight of responsibility. His critics immediately pointed to the outage as proof that fragile youth projects had no business touching real education.
+                </p>
+                <p>
+                    Instead of hiding, Adam and Maya took immediate accountability. They organized an open debugging session livestreamed to the community. They explained honestly why the system broke, how they were decentralizing the architecture, and invited local older students to learn error-handling protocols alongside them.
+                </p>
+                <p>
+                    That failure became their greatest teacher. By turning a system crash into a collaborative masterclass in resilience and transparent AI engineering, they earned deeper trust than perfection ever could have bought.
+                </p>
+            </div>
+        </article>
+
+        <!-- Chapter 5 -->
+        <article id="chapter-5" class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl border border-gold-500/20 scroll-mt-28">
+            <div class="absolute top-0 right-0 bg-gold-500/10 px-6 py-2 rounded-bl-2xl border-l border-b border-gold-500/20 text-gold-400 text-xs font-semibold tracking-wider uppercase">
+                Chapter Five
+            </div>
+            <div class="flex items-center space-x-3 mb-4">
+                <span class="text-xs uppercase tracking-widest text-gold-400 font-semibold">A New Horizon</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">The Future Begins Today</h2>
+            
+            <div class="space-y-6 text-gray-300 text-base sm:text-lg leading-relaxed">
+                <p>
+                    Today, Lumen is an open-source educational ecosystem deployed in schools across multiple regions, empowering tens of thousands of students who once thought higher education was out of reach. 
+                </p>
+                <p>
+                    Adam stands no longer as a lonely teenager with a taped-together laptop, but as a young AI ambassador and visionary leader. Yet, his mission remains unchanged. When asked about his journey during his graduation showcase, he didn't talk about algorithms or neural networks.
+                </p>
+                <p class="text-gold-400 font-medium italic border-l-2 border-gold-500 pl-4 py-1">
+                    "Technology is only as powerful as the heart that guides it," Adam told the audience. "AI gave us the voice, but teamwork, perseverance, and a deep love for our fellow human beings gave us something far more enduring: hope for tomorrow."
+                </p>
+            </div>
+        </article>
+
+        <!-- The Moral of the Story Section -->
+        <section id="moral" class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl border-2 border-gold-500/40 scroll-mt-28 bg-gradient-to-br from-navy-800 to-navy-900">
+            <div class="absolute -left-20 -bottom-20 w-60 h-60 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-gold-500/20 border border-gold-500 flex items-center justify-center text-gold-400 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                    <i data-lucide="compass" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-gold-400 tracking-widest uppercase">Timeless Takeaway</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">The Moral of the Story</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-300">
+                <div class="p-6 rounded-2xl bg-navy-900/60 border border-gold-500/20">
+                    <div class="text-gold-400 font-semibold mb-2 flex items-center space-x-2">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        <span>Responsible AI & Safety</span>
+                    </div>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Innovation must always be guided by ethics, transparency, and safety guardrails to ensure technology protects and uplifts communities rather than alienating them.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-navy-900/60 border border-gold-500/20">
+                    <div class="text-gold-400 font-semibold mb-2 flex items-center space-x-2">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span>Teamwork & Perseverance</span>
+                    </div>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Great breakthroughs are rarely achieved alone. Combining diverse skills and refusing to surrender in the face of failure turns obstacles into stepping stones.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-navy-900 border-t border-gold-500/20 py-12 mt-24 text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <h3 class="text-xl font-bold gold-gradient-text">The Boy Who Taught Tomorrow to Hope</h3>
+            <p class="text-sm text-gray-400">Created for the AI Ambassadors Graduation Project</p>
+            <div class="pt-4 flex justify-center space-x-4">
+                <button onclick="openShareModal()" class="px-4 py-2 rounded-xl bg-navy-800 border border-gold-500/30 text-gold-400 text-xs font-medium hover:bg-navy-700 transition-all flex items-center space-x-2">
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                    <span>Share This Project</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-900/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-md w-full border border-gold-500/40 relative transform scale-95 transition-transform duration-300 shadow-2xl" id="share-modal-content">
+            <button onclick="closeShareModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gold-400 p-2">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400">
+                    <i data-lucide="share-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Share Story</h3>
+                    <p class="text-xs text-gray-400">Inspire others with Adam's journey</p>
+                </div>
+            </div>
+
+            <!-- Direct Copy Link Box -->
+            <div class="mb-6">
+                <label class="block text-xs font-medium text-gray-300 mb-2">Project Link</label>
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="share-url-input" readonly class="w-full bg-navy-900 border border-gold-500/30 rounded-xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none">
+                    <button onclick="copyShareUrl()" class="px-4 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-xs rounded-xl transition-all flex items-center space-x-1 shrink-0">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        <span id="copy-btn-text">Copy</span>
+                    </button>
+                </div>
+                <p id="copy-success-msg" class="text-xs text-gold-400 mt-1.5 hidden flex items-center space-x-1">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span>Link copied successfully to clipboard!</span>
+                </p>
+            </div>
+
+            <!-- Social Quick Share Grid -->
+            <div class="space-y-2">
+                <span class="block text-xs font-medium text-gray-300">Quick Share via</span>
+                <div class="grid grid-cols-3 gap-2">
+                    <a id="share-whatsapp" href="#" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-xl bg-navy-900 border border-gold-500/20 hover:border-gold-500 hover:bg-navy-800 transition-all text-gray-300 hover:text-gold-400 text-xs space-y-1">
+                        <i data-lucide="message-circle" class="w-5 h-5 text-emerald-400"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                    <a id="share-facebook" href="#" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-xl bg-navy-900 border border-gold-500/20 hover:border-gold-500 hover:bg-navy-800 transition-all text-gray-300 hover:text-gold-400 text-xs space-y-1">
+                        <i data-lucide="facebook" class="w-5 h-5 text-blue-400"></i>
+                        <span>Facebook</span>
+                    </a>
+                    <a id="share-email" href="#" target="_blank" class="flex flex-col items-center justify-center p-3 rounded-xl bg-navy-900 border border-gold-500/20 hover:border-gold-500 hover:bg-navy-800 transition-all text-gray-300 hover:text-gold-400 text-xs space-y-1">
+                        <i data-lucide="mail" class="w-5 h-5 text-amber-400"></i>
+                        <span>Email</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript logic -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // Reading Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        // Ambient Web Audio Synthesizer Toggle
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let oscillator = null;
+        let gainNode = null;
+
+        const audioToggle = document.getElementById('audio-toggle');
+        const audioIcon = document.getElementById('audio-icon');
+        const audioText = document.getElementById('audio-text');
+
+        audioToggle.addEventListener('click', () => {
+            if (!isAudioPlaying) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    oscillator = audioCtx.createOscillator();
+                    gainNode = audioCtx.createGain();
+
+                    // Soft ambient warm chord frequency (C3 / G3 gentle hum)
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(130.81, audioCtx.currentTime); // C3
+
+                    gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    oscillator.start();
+
+                    isAudioPlaying = true;
+                    audioIcon.setAttribute('data-lucide', 'volume-x');
+                    audioText.textContent = 'Sound: On';
+                    lucide.createIcons();
+                } catch(e) {
+                    console.error(e);
+                }
+            } else {
+                if (oscillator) {
+                    oscillator.stop();
+                    oscillator.disconnect();
+                }
+                if (audioCtx) {
+                    audioCtx.close();
+                }
+                isAudioPlaying = false;
+                audioIcon.setAttribute('data-lucide', 'volume-2');
+                audioText.textContent = 'Sound: Off';
+                lucide.createIcons();
+            }
+        });
+
+        // Hero Canvas Particle Animation
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(234, 179, 8, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            const count = Math.floor((canvas.width * canvas.height) / 12000);
+            for (let i = 0; i < count; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+
+                // Connect nearby particles with faint gold lines
+                for (let j = i + 1; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        ctx.strokeStyle = `rgba(234, 179, 8, ${0.15 * (1 - dist / 100)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Share Story Functionality
+        const shareModal = document.getElementById('share-modal');
+        const shareModalContent = document.getElementById('share-modal-content');
+        const shareUrlInput = document.getElementById('share-url-input');
+
+        function openShareModal() {
+            const currentUrl = window.location.href;
+            shareUrlInput.value = currentUrl;
+
+            // Configure social share URLs
+            const shareTitle = encodeURIComponent("The Boy Who Taught Tomorrow to Hope");
+            const shareDesc = encodeURIComponent("An inspiring AI Ambassadors graduation project about a student named Adam who uses AI to help others learn and build a better future.");
+            
+            document.getElementById('share-whatsapp').href = `https://api.whatsapp.com/send?text=${shareTitle}%20-%20${encodeURIComponent(currentUrl)}`;
+            document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+            document.getElementById('share-email').href = `mailto:?subject=${shareTitle}&body=${shareDesc}%0A%0A${encodeURIComponent(currentUrl)}`;
+
+            // Check Web Share API first on mobile/supported browsers
+            if (navigator.share) {
+                navigator.share({
+                    title: 'The Boy Who Taught Tomorrow to Hope',
+                    text: 'Discover this inspiring AI Ambassadors graduation project story!',
+                    url: currentUrl,
+                }).catch(() => {
+                    showModalElement();
+                });
+            } else {
+                showModalElement();
+            }
+        }
+
+        function showModalElement() {
+            shareModal.classList.remove('hidden');
+            setTimeout(() => {
+                shareModal.classList.remove('opacity-0');
+                shareModalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeShareModal() {
+            shareModal.classList.add('opacity-0');
+            shareModalContent.classList.add('scale-95');
+            setTimeout(() => {
+                shareModal.classList.add('hidden');
+                document.getElementById('copy-success-msg').classList.add('hidden');
+                document.getElementById('copy-btn-text').textContent = 'Copy';
+            }, 300);
+        }
+
+        function copyShareUrl() {
+            shareUrlInput.select();
+            shareUrlInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(shareUrlInput.value).then(() => {
+                document.getElementById('copy-success-msg').classList.remove('hidden');
+                document.getElementById('copy-btn-text').textContent = 'Copied!';
+                setTimeout(() => {
+                    document.getElementById('copy-btn-text').textContent = 'Copy';
+                }, 3000);
+            });
+        }
+
+        // Close modal on background click
+        shareModal.addEventListener('click', (e) => {
+            if (e.target === shareModal) {
+                closeShareModal();
+            }
+        });
+    </script>
+</body>
+</html>
